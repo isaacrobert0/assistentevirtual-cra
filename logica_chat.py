@@ -14,3 +14,8 @@ def responder(pergunta, usuario_id):
         return resultado["resposta"]
     else:
         return "Questão ainda em processo de colocação no banco de dados..."
+    
+conexao = conectar()
+if conexao is None:
+    raise Exception("❌ Falha ao conectar ao banco. Verifique DATABASE_URL")
+cursor = conexao.cursor(dictionary=True)
