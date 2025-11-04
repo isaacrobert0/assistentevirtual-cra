@@ -27,7 +27,7 @@ with col2:
     st.image("imagens/uninassaulogo.svg", width=300) 
 
 st.markdown("<h1 style='text-align: center;'>Chatbot CRA - João Pessoa</h1>", unsafe_allow_html=True)
-st.markdown("<h5 style='text-align: center;'>Informe seus dados para iniciar a conversa ou faça login CRA para cadastrar perguntas.</h5>", unsafe_allow_html=True)
+st.markdown("<h5 style='text-align: center;'>Informe seus dados para iniciar a conversa.</h5>", unsafe_allow_html=True)
 
 # Formulário de cadastro de usuário normal
 if not st.session_state["logado"]:
@@ -59,13 +59,12 @@ senha_cra = st.text_input("Senha", type="password", key="senha_cra")
 if st.button("Entrar CRA", key="botao_cra"):
     usuarios_autorizados = {
         "cra@uninassau.edu.br": "Cra@unina2003",
-
     }
     if email_cra in usuarios_autorizados and senha_cra == usuarios_autorizados[email_cra]:
         st.session_state["cra_logado"] = True
         st.session_state["cra_usuario"] = email_cra
         st.success(f"Logado como CRA: {email_cra}")
-        st.experimental_rerun() 
+
     else:
         st.error("Email ou senha CRA inválidos")
 
