@@ -1,8 +1,9 @@
-
 import streamlit as st
 from bancodedados import salvar_usuario
 from bancodedados import salvar_interacao
 from logica_chat import responder
+from bancodedados import adicionar_faq
+
 
 st.set_page_config(page_title="CHATBOT CRA UNINASSAU", layout="centered")
 
