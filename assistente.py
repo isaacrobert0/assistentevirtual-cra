@@ -1,11 +1,12 @@
+
 import streamlit as st
-from bancodedados import salvar_usuario 
-from bancodedados import salvar_interacao 
-from logica_chat import responder 
+from bancodedados import salvar_usuario
+from bancodedados import salvar_interacao
+from logica_chat import responder
 
 st.set_page_config(page_title="CHATBOT CRA UNINASSAU", layout="centered")
 
-# Logo da Nassau
+# Logo da nassau
 avatar_uninassau = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRu-WxeGPMERFd0TGfOBYXt5RtHi4nbT4F_bw&s" 
 
 
@@ -26,7 +27,7 @@ with col2:
     st.image("imagens/uninassaulogo.svg", width=300) 
 
 st.markdown("<h1 style='text-align: center;'>Chatbot CRA - João Pessoa</h1>", unsafe_allow_html=True)
-st.markdown("<h5 style='text-align: center;'>Informe seus dados para que possamos dar início a nossa conversa ou faça login CRA para cadastrar perguntas.</h5>", unsafe_allow_html=True)
+st.markdown("<h5 style='text-align: center;'>Informe seus dados para iniciar a conversa ou faça login CRA para cadastrar perguntas.</h5>", unsafe_allow_html=True)
 
 # Formulário de cadastro de usuário normal
 if not st.session_state["logado"]:
@@ -51,41 +52,43 @@ if not st.session_state["logado"]:
 
     st.markdown("---")
 
-    # Login CRA abaixo do formulário
-    st.subheader("Login CRA (somente colaboradores)")
-    email_cra = st.text_input("Email CRA", key="email_cra")
-    senha_cra = st.text_input("Senha CRA", type="password", key="senha_cra")
-    if st.button("Entrar CRA", key="botao_cra"):
-        usuarios_autorizados = {
-            "cra@uninassau.edu.br": "Cra@uni2003",
-        }
-        if email_cra in usuarios_autorizados and senha_cra == usuarios_autorizados[email_cra]:
-            st.session_state["cra_logado"] = True
-            st.session_state["cra_usuario"] = email_cra
-            st.success(f"Logado como CRA: {email_cra}")
-        else:
-            st.error("Email ou senha CRA inválidos")
+# Login CRA
+st.subheader("Login CRA (Somente colaboradores do CRA ou pessoas autorizadas conseguem acessar)")
+email_cra = st.text_input("E-mail", key="email_cra")
+senha_cra = st.text_input("Senha", type="password", key="senha_cra")
+if st.button("Entrar CRA", key="botao_cra"):
+    usuarios_autorizados = {
+        "cra@uninassau.edu.br": "Cra@unina2003",
 
-# Tela de conversa
+    }
+    if email_cra in usuarios_autorizados and senha_cra == usuarios_autorizados[email_cra]:
+        st.session_state["cra_logado"] = True
+        st.session_state["cra_usuario"] = email_cra
+        st.success(f"Logado como CRA: {email_cra}")
+        st.experimental_rerun() 
+    else:
+        st.error("Email ou senha CRA inválidos")
+
+# Formulário de cadastro de perguntas/respostas (apenas CRA)
+if st.session_state["cra_logado"]:
+    with st.expander("Cadastrar nova pergunta (somente CRA)"):
+        pergunta = st.text_input("Pergunta", key="pergunta_cra")
+        resposta = st.text_area("Resposta", key="resposta_cra")
+        if st.button("Cadastrar Pergunta", key="botao_cadastrar"):
+            if pergunta and resposta:
+                from bancodedados import adicionar_faq
+                sucesso = adicionar_faq(pergunta, resposta)
+                if sucesso:
+                    st.success("✅ Pergunta e resposta cadastradas com sucesso!")
+                else:
+                    st.error("❌ Erro ao cadastrar. Verifique a conexão com o banco.")
+            else:
+                st.warning("⚠️ Preencha tanto a pergunta quanto a resposta.")
+
+# Tela de chat
 if st.session_state["logado"]:
     st.title("Chat Iniciado!")
     st.write(f"Conectado como: **{st.session_state['usuario']['nome']}**")
-
-# Formulário de cadastro de perguntas/respostas (apenas CRA consegue ver)
-    if st.session_state["cra_logado"]:
-        with st.expander("Cadastrar nova pergunta (somente CRA)"):
-            pergunta = st.text_input("Pergunta")
-            resposta = st.text_area("Resposta")
-            if st.button("Cadastrar Pergunta"):
-                if pergunta and resposta:
-                    from bancodedados import adicionar_faq
-                    sucesso = adicionar_faq(pergunta, resposta)
-                    if sucesso:
-                        st.success("✅ Pergunta e resposta cadastradas com sucesso!")
-                    else:
-                        st.error("❌ Erro ao cadastrar. Verifique a conexão com o banco.")
-                else:
-                    st.warning("⚠️ Preencha tanto a pergunta quanto a resposta.")
 
 # Mostra histórico
     for message in st.session_state["messages"]:
@@ -95,13 +98,13 @@ if st.session_state["logado"]:
 
 # Mostra entrada e processa resposta
     if prompt := st.chat_input("Digite sua dúvida aqui..."):
-        
+
 # Adiciona e mostra a pergunta do usuário
         st.session_state["messages"].append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
-# Processa e mostra a resposta do assistente
+ # Processa e mostra a resposta do assistente
         with st.chat_message("assistant", avatar=avatar_uninassau): 
             with st.spinner("O assistente está buscando a resposta..."):
                 usuario_id = st.session_state["usuario"]["id"]
