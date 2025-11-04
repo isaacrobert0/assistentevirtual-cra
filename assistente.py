@@ -53,7 +53,7 @@ if not st.session_state["logado"]:
 
     st.markdown("---")
 
-if not st.session_state["Logado"]:
+if not st.session_state["logado"]:
 # Login CRA
     st.subheader("Login CRA (Somente colaboradores do CRA ou pessoas autorizadas conseguem acessar)")
     email_cra = st.text_input("E-mail", key="email_cra")
@@ -80,11 +80,11 @@ if st.session_state["cra_logado"]:
                 from bancodedados import adicionar_faq
                 sucesso = adicionar_faq(pergunta, resposta)
                 if sucesso:
-                    st.success("✅ Pergunta e resposta cadastradas com sucesso!")
+                    st.success("Pergunta e resposta cadastradas com sucesso!")
                 else:
-                    st.error("❌ Erro ao cadastrar. Verifique a conexão com o banco.")
+                    st.error("Erro ao cadastrar. Verifique a conexão com o banco.")
             else:
-                st.warning("⚠️ Preencha tanto a pergunta quanto a resposta.")
+                st.warning("Preencha tanto a pergunta quanto a resposta.")
 
 # Tela de chat
 if st.session_state["logado"]:
