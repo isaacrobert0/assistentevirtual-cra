@@ -53,13 +53,14 @@ if not st.session_state["logado"]:
 
     st.markdown("---")
 
+if not st.session_state["Logado"]:
 # Login CRA
-st.subheader("Login CRA (Somente colaboradores do CRA ou pessoas autorizadas conseguem acessar)")
-email_cra = st.text_input("E-mail", key="email_cra")
-senha_cra = st.text_input("Senha", type="password", key="senha_cra")
-if st.button("Entrar CRA", key="botao_cra"):
-    usuarios_autorizados = {
-        "cra@uninassau.edu.br": "Cra@unina2003",
+    st.subheader("Login CRA (Somente colaboradores do CRA ou pessoas autorizadas conseguem acessar)")
+    email_cra = st.text_input("E-mail", key="email_cra")
+    senha_cra = st.text_input("Senha", type="password", key="senha_cra")
+    if st.button("Entrar CRA", key="botao_cra"):
+        usuarios_autorizados = {
+            "cra@uninassau.edu.br": "Cra@unina2003",
     }
     if email_cra in usuarios_autorizados and senha_cra == usuarios_autorizados[email_cra]:
         st.session_state["cra_logado"] = True
