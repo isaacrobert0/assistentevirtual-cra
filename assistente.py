@@ -5,7 +5,7 @@ from logica_chat import responder
 
 st.set_page_config(page_title="CHATBOT CRA UNINASSAU", layout="centered")
 
-# logo da nassau para o avatar 
+# Logo da nassau para o avatar 
 avatar_uninassau = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRu-WxeGPMERFd0TGfOBYXt5RtHi4nbT4F_bw&s" 
 
 
@@ -16,7 +16,7 @@ if "usuario" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
     
-# tela inicial
+# Tela inicial
 col1, col2, col3 = st.columns([1, 3, 1])
 
 with col2:
@@ -48,27 +48,27 @@ if not st.session_state["logado"]:
                 else:
                     st.error("Erro ao conectar ao banco de dados ou salvar usuário. Verifique se o MySQL está ativo e as credenciais.")
 
-# tela de conversa
+# Tela de conversa
 else:
     st.title("Chat Iniciado!")
     st.write(f"Conectado como: **{st.session_state['usuario']['nome']}**")
 
-# mostra histórico
+# Mostra histórico
     for message in st.session_state["messages"]:
 
         avatar_role = avatar_uninassau if message["role"] == "assistant" else "user"
         with st.chat_message(message["role"], avatar=avatar_role):
             st.markdown(message["content"])
 
-# mostra entrada e processar resposta
+# Mostra entrada e processar resposta
     if prompt := st.chat_input("Digite sua dúvida aqui..."):
         
-# adiciona e mostra a pergunta do usuário
+# Adiciona e mostra a pergunta do usuário
         st.session_state["messages"].append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
-# processa e mostra a resposta do assistente
+# Processa e mostra a resposta do assistente
         with st.chat_message("assistant", avatar=avatar_uninassau): 
             with st.spinner("O assistente está buscando a resposta..."):
                 usuario_id = st.session_state["usuario"]["id"]
@@ -76,10 +76,10 @@ else:
 
             st.markdown(resposta)
 
-# adiciona a resposta ao histórico
+# Adiciona a resposta ao histórico
             st.session_state["messages"].append({"role": "assistant", "content": resposta})
 
-# botão de sair na barra lateral
+# Botão de sair na barra lateral
     with st.sidebar:
         if st.button("Sair e Encerrar Sessão"):
             st.session_state.clear()
