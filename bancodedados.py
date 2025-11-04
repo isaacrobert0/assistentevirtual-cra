@@ -2,6 +2,8 @@ import os
 import mysql.connector
 from urllib.parse import urlparse
 from mysql.connector import Error
+import unicodedata
+
 
 def conectar():
     try:
@@ -70,6 +72,10 @@ def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
         return False
 
 
+def remover_acentos(texto):
+    return ''.join(c for c in unicodedata.normalize('NFD', texto)
+                   if unicodedata.category(c) != 'Mn')
+
 def buscar_resposta(pergunta):
     conexao = conectar()
     if conexao is None:
@@ -77,16 +83,19 @@ def buscar_resposta(pergunta):
 
     try:
         cursor = conexao.cursor(dictionary=True)
-        sql = "SELECT resposta FROM faq WHERE LOWER(pergunta) LIKE %s"
-        cursor.execute(sql, (f"%{pergunta.lower()}%",))
-        resultado = cursor.fetchone()
+        sql = "SELECT resposta FROM faq"
+        cursor.execute(sql)
+        resultados = cursor.fetchall()
         cursor.close()
         conexao.close()
 
-        if resultado:
-            return resultado["resposta"]
-        else:
-            return None
-    except Error as e:
+        pergunta_usuario = remover_acentos(pergunta.lower())
+        for row in resultados:
+            pergunta_db = remover_acentos(row["pergunta"].lower())
+            if pergunta_usuario in pergunta_db:
+                return row["resposta"]
+
+        return None
+    except Exception as e:
         print("❌ Erro ao buscar resposta:", e)
         return None
