@@ -6,8 +6,12 @@ from mysql.connector import Error
 def conectar():
     try:
         db_url = os.getenv("DATABASE_URL")
-        url = urlparse(db_url)
+        if not db_url:
+            print("❌ DATABASE_URL não está definida!")
+            return None
+        print(f"🌐 DATABASE_URL lida: {db_url}")  # debug
 
+        url = urlparse(db_url)
         conexao = mysql.connector.connect(
             host=url.hostname,
             user=url.username,
@@ -15,10 +19,10 @@ def conectar():
             database=url.path[1:],
             port=url.port
         )
-
+        print("✅ Conexão estabelecida!")
         return conexao
     except Error as e:
-        print(f"❌ Erro ao conectar ao banco: {e}")
+        print(f"❌ Erro ao conectar: {e}")
         return None
 
 

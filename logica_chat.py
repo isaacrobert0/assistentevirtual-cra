@@ -17,5 +17,6 @@ def responder(pergunta, usuario_id):
     
 conexao = conectar()
 if conexao is None:
-    raise Exception("❌ Falha ao conectar ao banco. Verifique DATABASE_URL")
+    raise Exception("❌ Falha ao conectar ao banco. Verifique DATABASE_URL e logs do Render.")
 cursor = conexao.cursor(dictionary=True)
+
