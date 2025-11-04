@@ -77,8 +77,8 @@ def buscar_resposta(pergunta):
 
     try:
         cursor = conexao.cursor(dictionary=True)
-        sql = "SELECT resposta FROM faq WHERE pergunta LIKE %s"
-        cursor.execute(sql, (f"%{pergunta}%",))
+        sql = "SELECT resposta FROM faq WHERE LOWER(pergunta) LIKE %s"
+        cursor.execute(sql, (f"%{pergunta.lower()}%",))
         resultado = cursor.fetchone()
         cursor.close()
         conexao.close()
