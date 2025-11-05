@@ -27,8 +27,8 @@ col1, col2, col3 = st.columns([1, 3, 1])
 with col2:
     st.image("imagens/uninassaulogo.svg", width=300) 
 
-st.markdown("<h1 style='text-align: center;'>ASSISTENTE VIRTUAL CRA - João Pessoa</h1>", unsafe_allow_html=True)
-st.markdown("<h5 style='text-align: center;'>Informe seus dados para iniciar a conversa.</h5>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center;'>ASSISTENTE VIRTUAL CRA - João Pessoa</h2>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center;'>Informe seus dados para iniciar a conversa.</h3>", unsafe_allow_html=True)
 
 # Formulário de cadastro de usuário normal
 if not st.session_state["logado"]:
