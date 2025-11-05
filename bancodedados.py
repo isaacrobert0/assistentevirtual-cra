@@ -68,3 +68,16 @@ def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
         if conexao:
             conexao.close()
         return False
+    
+    def buscar_resposta(pergunta):
+        con = conectar()
+        cursor = con.cursor()
+        cursor.execute("SELECT resposta FROM faq WHERE pergunta LIKE %s", (f"%{pergunta}%",))
+        resultado = cursor.fetchone()
+        con.close()
+        
+    if resultado:
+        return resultado[0]
+    else:
+        return None
+
