@@ -1,19 +1,17 @@
 from bancodedados import conectar
+from bancodedados import buscar_resposta, salvar_interacao
 
 def responder(pergunta, usuario_id):
-    conexao = conectar()
-    cursor = conexao.cursor(dictionary=True)
-
-    cursor.execute("SELECT resposta FROM faq WHERE pergunta LIKE %s", (f"%{pergunta}%",))
-    resultado = cursor.fetchone()
-
-    cursor.close()
-    conexao.close()
-
-    if resultado:
-        return resultado["resposta"]
-    else:
-        return "Questão ainda em processo de colocação no banco de dados..."
+    # Busca no FAQ
+    resposta = buscar_resposta(pergunta)
+    if not resposta:
+        resposta = "Desculpe, não encontrei uma resposta. 😅"
+    
+    # Salva a interação
+    if usuario_id:
+        salvar_interacao(usuario_id, pergunta, resposta)
+    
+    return resposta
     
 conexao = conectar()
 if conexao is None:
