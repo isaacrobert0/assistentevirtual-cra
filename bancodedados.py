@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 def conectar():
     db_url = os.getenv("DATABASE_URL")
     if not db_url:
-        print("❌ DATABASE_URL não encontrada!")
+        print("DATABASE_URL não encontrada!")
         return None
 
     try:
@@ -21,7 +21,7 @@ def conectar():
 
         return conexao
     except Error as e:
-        print(f"❌ Erro ao conectar ao banco: {e}")
+        print(f"Erro ao conectar ao banco: {e}")
         return None
 
 
@@ -42,14 +42,14 @@ def salvar_usuario(nome, tipo_usuario, matricula, email):
         conexao.close()
         return usuario_id
     except Error as e:
-        print("❌ Erro ao salvar usuário:", e)
+        print("Erro ao salvar usuário:", e)
         return None
 
 
 def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
     conexao = conectar()
     if not conexao:
-        print("❌ Falha ao conectar ao banco para salvar interação")
+        print("Falha ao conectar ao banco para salvar interação")
         return False
 
     try:
@@ -84,7 +84,7 @@ def buscar_resposta(pergunta):
 def adicionar_faq(pergunta, resposta):
     conexao = conectar()
     if not conexao:
-        print("❌ Falha ao conectar ao banco para adicionar FAQ")
+        print("Falha ao conectar ao banco para adicionar FAQ")
         return False
 
     try:
@@ -94,10 +94,10 @@ def adicionar_faq(pergunta, resposta):
         conexao.commit()
         cursor.close()
         conexao.close()
-        print("✅ FAQ adicionada com sucesso!")
+        print("FAQ adicionada com sucesso!")
         return True
     except Error as e:
-        print("❌ Erro ao adicionar FAQ:", e)
+        print("Erro ao adicionar FAQ:", e)
         if conexao:
             conexao.close()
         return False
