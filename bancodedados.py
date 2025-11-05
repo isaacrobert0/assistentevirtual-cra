@@ -81,3 +81,23 @@ def buscar_resposta(pergunta):
         else:
             return None
 
+def adicionar_faq(pergunta, resposta):
+    conexao = conectar()
+    if not conexao:
+        print("❌ Falha ao conectar ao banco para adicionar FAQ")
+        return False
+
+    try:
+        cursor = conexao.cursor()
+        sql = "INSERT INTO faq (pergunta, resposta) VALUES (%s, %s)"
+        cursor.execute(sql, (pergunta, resposta))
+        conexao.commit()
+        cursor.close()
+        conexao.close()
+        print("✅ FAQ adicionada com sucesso!")
+        return True
+    except Error as e:
+        print("❌ Erro ao adicionar FAQ:", e)
+        if conexao:
+            conexao.close()
+        return False
