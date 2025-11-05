@@ -5,7 +5,7 @@ def responder(pergunta, usuario_id):
     # Busca no FAQ
     resposta = buscar_resposta(pergunta)
     if not resposta:
-        resposta = "Desculpe, não encontrei uma resposta. 😅"
+        resposta = "Desculpe, não encontrei uma resposta."
     
     # Salva a interação
     if usuario_id:
@@ -15,6 +15,6 @@ def responder(pergunta, usuario_id):
     
 conexao = conectar()
 if conexao is None:
-    raise Exception("❌ Falha ao conectar ao banco. Verifique DATABASE_URL e logs do Render.")
+    raise Exception("Falha ao conectar ao banco. Verifique DATABASE_URL e logs do Render.")
 cursor = conexao.cursor(dictionary=True)
 
