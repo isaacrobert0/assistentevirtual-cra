@@ -5,7 +5,7 @@ from logica_chat import responder
 from bancodedados import adicionar_faq
 
 
-st.set_page_config(page_title="CHATBOT CRA UNINASSAU", layout="centered")
+st.set_page_config(page_title="ASSISTENTE VIRTUAL CRA UNINASSAU", layout="centered")
 
 # Logo da nassau
 avatar_uninassau = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRu-WxeGPMERFd0TGfOBYXt5RtHi4nbT4F_bw&s" 
@@ -27,7 +27,7 @@ col1, col2, col3 = st.columns([1, 3, 1])
 with col2:
     st.image("imagens/uninassaulogo.svg", width=300) 
 
-st.markdown("<h1 style='text-align: center;'>Chatbot CRA - João Pessoa</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>ASSISTENTE VIRTUAL CRA - João Pessoa</h1>", unsafe_allow_html=True)
 st.markdown("<h5 style='text-align: center;'>Informe seus dados para iniciar a conversa.</h5>", unsafe_allow_html=True)
 
 # Formulário de cadastro de usuário normal
