@@ -63,14 +63,14 @@ if not st.session_state["logado"]:
     email_cra = st.text_input("E-mail", key="email_cra")
     senha_cra = st.text_input("Senha", type="password", key="senha_cra")
     if st.button("Entrar CRA", key="botao_cra"):
-   
+
         if email_cra in usuarios_autorizados and senha_cra == usuarios_autorizados[email_cra]:
             st.session_state["cra_logado"] = True
             st.session_state["cra_usuario"] = email_cra
             st.success(f"Logado como CRA: {email_cra}")
+        else:
+            st.error("Email ou senha CRA inválidos")
 
-    else:
-        st.error("Email ou senha CRA inválidos")
 
 # Formulário de cadastro de perguntas/respostas (apenas CRA)
 if st.session_state["cra_logado"]:
