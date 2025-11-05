@@ -56,7 +56,7 @@ if not st.session_state["logado"]:
 if not st.session_state["logado"]:
 
     usuarios_autorizados = {
-            "cra@uninassau.edu.br": "Cra@unina2003",
+            "cra@uninassau.edu.br": "Cra@uninassau#2003.",
     }
 # Login CRA
     st.subheader("Login CRA (Somente colaboradores do CRA ou pessoas autorizadas conseguem acessar)")
