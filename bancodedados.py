@@ -32,7 +32,7 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
         return None
 
     cursor = db.cursor()
-    senha_hash = bcrypt.hash(senha) if senha else None
+    senha_hash = bcrypt.hash(senha[:72]) if senha else None
 
     sql = """
         INSERT INTO usuarios (nome, tipo_usuario, matricula, email, senha)
@@ -85,7 +85,7 @@ def validar_login(email, senha_digitada):
         return False
 
     senha_hash = usuario["senha"]
-    return bcrypt.verify(senha_digitada, senha_hash)
+    return bcrypt.verify(senha_digitada[:72], senha_hash)
 
 
 def adicionar_faq(pergunta, resposta):
