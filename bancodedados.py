@@ -2,7 +2,7 @@ import os
 import mysql.connector
 from mysql.connector import Error
 from urllib.parse import urlparse
-from passlib.hash import bcrypt
+import bcrypt
 
 def conectar():
     db_url = os.getenv("DATABASE_URL")
@@ -106,13 +106,17 @@ def adicionar_faq(pergunta, resposta):
 def validar_login(email, senha_digitada):
     conexao = conectar()
     cursor = conexao.cursor(dictionary=True)
+
     cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
     usuario = cursor.fetchone()
-    cursor.close()
-    conexao.close()
 
-    if usuario:
-        senha_hash = usuario["senha"]
-        return bcrypt.verify(senha_digitada, senha_hash)
+    if not usuario:
+        return False
 
-    return False
+    senha_hash = usuario["senha"]
+
+    if isinstance(senha_hash, str):
+        senha_hash = senha_hash.encode("utf-8")
+
+    return bcrypt.checkpw(senha_digitada.encode("utf-8"), senha_hash)
+
