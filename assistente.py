@@ -57,18 +57,19 @@ if not st.session_state["logado"]:
 if not st.session_state["logado"]:
     st.subheader("Login CRA (Somente colaboradores autorizados)")
 
-email_cra = st.text_input("E-mail CRA", key="email_cra")
-senha_cra = st.text_input("Senha CRA", type="password", key="senha_cra")
+    if not st.session_state["cra_logado"]:
+        email_cra = st.text_input("E-mail CRA", key="email_cra")
+        senha_cra = st.text_input("Senha CRA", type="password", key="senha_cra")
 
-if st.button("Entrar CRA", key="botao_cra"):
-    usuario_cra = validar_login(email_cra, senha_cra)
+        if st.button("Entrar CRA", key="botao_cra"):
+            usuario_cra = validar_login(email_cra, senha_cra)
+            if usuario_cra:
+                st.session_state["cra_logado"] = True
+                st.session_state["cra_usuario"] = usuario_cra
+                st.success(f"Logado como CRA: {usuario_cra['nome']}")
+            else:
+                st.error("Email ou senha CRA inválidos.")
 
-    if usuario_cra:
-        st.session_state["cra_logado"] = True
-        st.session_state["cra_usuario"] = usuario_cra
-        st.success(f"Logado como CRA: {usuario_cra['nome']}")
-    else:
-        st.error("Email ou senha CRA inválidos.")
 
 
 # Formulário de cadastro de perguntas/respostas (apenas CRA)
