@@ -66,7 +66,7 @@ if not st.session_state["logado"]:
             if usuario_cra:
                 st.session_state["cra_logado"] = True
                 st.session_state["cra_usuario"] = usuario_cra
-                st.success(f"Logado como CRA: {usuario_cra['nome']}")
+                st.success("Login Aprovado!")
             else:
                 st.error("Email ou senha CRA inválidos.")
 
