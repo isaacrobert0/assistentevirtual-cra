@@ -2,6 +2,7 @@ from passlib.hash import bcrypt
 import mysql.connector
 from mysql.connector import Error
 import os
+import hashlib
 from urllib.parse import urlparse
 
 def conectar():
@@ -30,7 +31,12 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
         return None
 
     cursor = db.cursor()
-    senha_hash = bcrypt.hash(senha.encode("utf-8")[:72]) if senha else None
+    
+    if senha:
+        senha_sha = hashlib.sha256(senha.encode("utf-8")).digest()
+        senha_hash = bcrypt.hash(senha_sha)
+    else:
+        senha_hash = None
 
     sql = """
         INSERT INTO usuarios (nome, tipo_usuario, matricula, email, senha)
@@ -81,8 +87,8 @@ def validar_login(email, senha_digitada):
         return False
 
     senha_hash = usuario["senha"]
-    senha_bytes = senha_digitada.encode("utf-8")[:72]  # truncar em bytes
-    return bcrypt.verify(senha_bytes, senha_hash)
+    senha_sha = hashlib.sha256(senha_digitada.encode("utf-8")).digest()
+    return bcrypt.verify(senha_sha, senha_hash)
 
 def adicionar_faq(pergunta, resposta):
     conexao = conectar()
