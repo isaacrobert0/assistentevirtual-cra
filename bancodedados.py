@@ -42,6 +42,31 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     db.close()
     return novo_id
 
+def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
+    conexao = conectar()
+    if not conexao:
+        print("Falha ao conectar ao banco para salvar interação")
+        return False
+
+    try:
+        cursor = conexao.cursor()
+        sql = """
+        INSERT INTO interacoes (usuario_id, mensagem_usuario, resposta_chatbot)
+        VALUES (%s, %s, %s)
+        """
+        cursor.execute(sql, (usuario_id, mensagem_usuario, resposta_chatbot))
+        conexao.commit()
+        cursor.close()
+        conexao.close()
+        return True
+
+    except Exception as e:
+        print("Erro ao salvar interação:", e)
+        if conexao:
+            conexao.close()
+        return False
+
+
 def validar_login(email, senha_digitada):
     conexao = conectar()
     cursor = conexao.cursor(dictionary=True)
