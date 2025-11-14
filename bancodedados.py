@@ -2,8 +2,8 @@ import os
 import mysql.connector
 from mysql.connector import Error
 from urllib.parse import urlparse
-from werkzeug.security import generate_password_hash, check_password_hash
-import mysql.connector
+from passlib.hash import bcrypt
+
 
 def conectar():
     db_url = os.getenv("DATABASE_URL")
@@ -31,7 +31,7 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     db = conectar()
     cursor = db.cursor()
 
-    senha_hash = generate_password_hash(senha) if senha else None
+    senha_hash = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt()).decode("utf-8") if senha else None
 
     sql = """
         INSERT INTO usuarios (nome, tipo_usuario, matricula, email, senha)
@@ -41,7 +41,6 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     db.commit()
 
     novo_id = cursor.lastrowid
-
     cursor.close()
     db.close()
     return novo_id
@@ -69,18 +68,20 @@ def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
         if conexao:
             conexao.close()
         return False
-    
-def buscar_resposta(pergunta):
-        con = conectar()
-        cursor = con.cursor()
-        cursor.execute("SELECT resposta FROM faq WHERE pergunta LIKE %s", (f"%{pergunta}%",))
-        resultado = cursor.fetchone()
-        con.close()
 
-        if resultado:
-            return resultado[0]
-        else:
-            return None
+
+def buscar_resposta(pergunta):
+    con = conectar()
+    cursor = con.cursor()
+    cursor.execute("SELECT resposta FROM faq WHERE pergunta LIKE %s", (f"%{pergunta}%",))
+    resultado = cursor.fetchone()
+    con.close()
+
+    if resultado:
+        return resultado[0]
+    else:
+        return None
+
 
 def adicionar_faq(pergunta, resposta):
     conexao = conectar()
@@ -89,33 +90,3 @@ def adicionar_faq(pergunta, resposta):
         return False
 
     try:
-        cursor = conexao.cursor()
-        sql = "INSERT INTO faq (pergunta, resposta) VALUES (%s, %s)"
-        cursor.execute(sql, (pergunta, resposta))
-        conexao.commit()
-        cursor.close()
-        conexao.close()
-        print("FAQ adicionada com sucesso!")
-        return True
-    except Error as e:
-        print("Erro ao adicionar FAQ:", e)
-        if conexao:
-            conexao.close()
-        return False
-
-def validar_login(email, senha):
-    db = conectar()
-    cursor = db.cursor(dictionary=True)
-
-    sql = "SELECT * FROM usuarios WHERE email = %s"
-    cursor.execute(sql, (email,))
-    usuario = cursor.fetchone()
-
-    cursor.close()
-    db.close()
-
-    # Se encontrou o usuário e a senha é válida
-    if usuario and usuario["senha"] and check_password_hash(usuario["senha"], senha):
-        return usuario
-
-    return None
