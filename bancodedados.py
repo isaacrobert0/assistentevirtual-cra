@@ -4,7 +4,6 @@ from mysql.connector import Error
 import os
 from urllib.parse import urlparse
 
-
 def conectar():
     db_url = os.getenv("DATABASE_URL")
     if not db_url:
@@ -25,14 +24,13 @@ def conectar():
         print(f"Erro ao conectar ao banco: {e}")
         return None
 
-
 def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     db = conectar()
     if not db:
         return None
 
     cursor = db.cursor()
-    senha_hash = bcrypt.hash(senha[:72]) if senha else None
+    senha_hash = bcrypt.hash(senha.encode("utf-8")[:72]) if senha else None
 
     sql = """
         INSERT INTO usuarios (nome, tipo_usuario, matricula, email, senha)
@@ -44,7 +42,6 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     cursor.close()
     db.close()
     return novo_id
-
 
 def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
     conexao = conectar()
@@ -69,7 +66,6 @@ def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
             conexao.close()
         return False
 
-
 def validar_login(email, senha_digitada):
     conexao = conectar()
     if not conexao:
@@ -85,8 +81,8 @@ def validar_login(email, senha_digitada):
         return False
 
     senha_hash = usuario["senha"]
-    return bcrypt.verify(senha_digitada[:72], senha_hash)
-
+    senha_bytes = senha_digitada.encode("utf-8")[:72]  # truncar em bytes
+    return bcrypt.verify(senha_bytes, senha_hash)
 
 def adicionar_faq(pergunta, resposta):
     conexao = conectar()
@@ -107,7 +103,6 @@ def adicionar_faq(pergunta, resposta):
         if conexao:
             conexao.close()
         return False
-
 
 def buscar_resposta(pergunta):
     conexao = conectar()
