@@ -29,7 +29,7 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     db = conectar()
     cursor = db.cursor()
 
-    senha_hash = bcrypt.hash(senha) if senha else None
+    senha_hash = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt()) if senha else None
 
     sql = """
         INSERT INTO usuarios (nome, tipo_usuario, matricula, email, senha)
