@@ -3,6 +3,7 @@ from bancodedados import salvar_usuario
 from bancodedados import salvar_interacao
 from logica_chat import responder
 from bancodedados import adicionar_faq
+from bancodedados import validar_login
 
 
 st.set_page_config(page_title="ASSISTENTE VIRTUAL CRA UNINASSAU", layout="centered")
@@ -54,23 +55,21 @@ if not st.session_state["logado"]:
     st.markdown("---")
 
 if not st.session_state["logado"]:
+    st.subheader("Login CRA (Somente colaboradores autorizados)")
 
-    usuarios_autorizados = {
-            "cra@uninassau.edu.br": "Cra@uninassau#2003.",
-    }
-# Login CRA
-    st.subheader("Login CRA (Somente colaboradores do CRA ou pessoas autorizadas conseguem acessar)")
-    email_cra = st.text_input("E-mail", key="email_cra")
-    senha_cra = st.text_input("Senha", type="password", key="senha_cra")
+    email_cra = st.text_input("E-mail CRA", key="email_cra")
+    senha_cra = st.text_input("Senha CRA", type="password", key="senha_cra")
+
     if st.button("Entrar CRA", key="botao_cra"):
 
-        if email_cra in usuarios_autorizados and senha_cra == usuarios_autorizados[email_cra]:
-            st.session_state["cra_logado"] = True
-            st.session_state["cra_usuario"] = email_cra
-            st.success(f"Logado como CRA: {email_cra}")
-        else:
-            st.error("Email ou senha CRA inválidos")
+        usuario_cra = validar_login(email_cra, senha_cra)
 
+        if usuario_cra:
+            st.session_state["cra_logado"] = True
+            st.session_state["cra_usuario"] = usuario_cra
+            st.success(f"Logado como CRA: {usuario_cra['nome']}")
+        else:
+            st.error("Email ou senha CRA inválidos.")
 
 # Formulário de cadastro de perguntas/respostas (apenas CRA)
 if st.session_state["cra_logado"]:
