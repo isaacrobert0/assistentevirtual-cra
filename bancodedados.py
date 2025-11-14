@@ -33,7 +33,7 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     cursor = db.cursor()
     
     if senha:
-        senha_sha = hashlib.sha256(senha.encode("utf-8")).digest()
+        senha_sha = hashlib.sha256(senha.encode("utf-8")).hexdigest() 
         senha_hash = bcrypt.hash(senha_sha)
     else:
         senha_hash = None
@@ -87,8 +87,9 @@ def validar_login(email, senha_digitada):
         return False
 
     senha_hash = usuario["senha"]
-    senha_sha = hashlib.sha256(senha_digitada.encode("utf-8")).digest()
+    senha_sha = hashlib.sha256(senha_digitada.encode("utf-8")).hexdigest()
     return bcrypt.verify(senha_sha, senha_hash)
+
 
 def adicionar_faq(pergunta, resposta):
     conexao = conectar()
