@@ -2,6 +2,8 @@ import os
 import mysql.connector
 from mysql.connector import Error
 from urllib.parse import urlparse
+from werkzeug.security import generate_password_hash, check_password_hash
+import mysql.connector
 
 def conectar():
     db_url = os.getenv("DATABASE_URL")
@@ -25,25 +27,24 @@ def conectar():
         return None
 
 
-def salvar_usuario(nome, tipo_usuario, matricula, email):
-    conexao = conectar()
-    if not conexao:
-        return None
-    try:
-        cursor = conexao.cursor()
-        sql = """
-        INSERT INTO usuarios (nome, matricula, email, tipo_usuario)
-        VALUES (%s, %s, %s, %s)
-        """
-        cursor.execute(sql, (nome, matricula, email, tipo_usuario))
-        conexao.commit()
-        usuario_id = cursor.lastrowid
-        cursor.close()
-        conexao.close()
-        return usuario_id
-    except Error as e:
-        print("Erro ao salvar usuário:", e)
-        return None
+def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
+    db = conectar()
+    cursor = db.cursor()
+
+    senha_hash = generate_password_hash(senha) if senha else None
+
+    sql = """
+        INSERT INTO usuarios (nome, tipo_usuario, matricula, email, senha)
+        VALUES (%s, %s, %s, %s, %s)
+    """
+    cursor.execute(sql, (nome, tipo_usuario, matricula, email, senha_hash))
+    db.commit()
+
+    novo_id = cursor.lastrowid
+
+    cursor.close()
+    db.close()
+    return novo_id
 
 
 def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
@@ -101,3 +102,20 @@ def adicionar_faq(pergunta, resposta):
         if conexao:
             conexao.close()
         return False
+
+def validar_login(email, senha):
+    db = conectar()
+    cursor = db.cursor(dictionary=True)
+
+    sql = "SELECT * FROM usuarios WHERE email = %s"
+    cursor.execute(sql, (email,))
+    usuario = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    # Se encontrou o usuário e a senha é válida
+    if usuario and usuario["senha"] and check_password_hash(usuario["senha"], senha):
+        return usuario
+
+    return None
