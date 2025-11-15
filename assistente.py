@@ -58,26 +58,26 @@ if not st.session_state["logado"]:
     st.subheader("Login CRA (Somente colaboradores autorizados)")
 
     if not st.session_state["cra_logado"]:
-        email_cra = st.text_input("E-mail CRA", key="email_cra")
-        senha_cra = st.text_input("Senha CRA", type="password", key="senha_cra")
+        email_cra = st.text_input("E-mail", key="email_cra")
+        senha_cra = st.text_input("Senha", type="password", key="senha_cra")
 
         if st.button("Entrar CRA", key="botao_cra"):
             usuario_cra = validar_login(email_cra, senha_cra)
             if usuario_cra:
                 st.session_state["cra_logado"] = True
                 st.session_state["cra_usuario"] = usuario_cra
-                st.success("Login Aprovado!")
+                st.success("Login Autorizado!")
             else:
-                st.error("Email ou senha CRA inválidos.")
+                st.error("E-mail ou Senha incorreta.")
 
 
 
 # Formulário de cadastro de perguntas/respostas (apenas CRA)
 if st.session_state["cra_logado"]:
-    with st.expander("Cadastrar nova pergunta (somente CRA)"):
+    with st.expander("Cadastrar nova pergunta:"):
         pergunta = st.text_input("Pergunta", key="pergunta_cra")
         resposta = st.text_area("Resposta", key="resposta_cra")
-        if st.button("Cadastrar Pergunta", key="botao_cadastrar"):
+        if st.button("Cadastrar", key="botao_cadastrar"):
             if pergunta and resposta:
                 from bancodedados import adicionar_faq
                 sucesso = adicionar_faq(pergunta, resposta)
@@ -91,7 +91,7 @@ if st.session_state["cra_logado"]:
 # Tela de chat
 if st.session_state["logado"]:
     st.title("Chat Iniciado!")
-    st.write(f"Conectado como: **{st.session_state['usuario']['nome']}**")
+    st.write(f"Conectado(a) como: **{st.session_state['usuario']['nome']}**")
 
 # Mostra histórico
     for message in st.session_state["messages"]:
