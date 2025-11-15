@@ -77,7 +77,7 @@ if st.session_state["cra_logado"]:
     with st.expander("Cadastrar nova pergunta:"):
         pergunta = st.text_input("Pergunta", key="pergunta_cra")
         resposta = st.text_area("Resposta", key="resposta_cra")
-        if st.button("Cadastrar", key="botao_cadastrar"):
+        if st.button("Salvar Respostas", key="botao_cadastrar"):            
             if pergunta and resposta:
                 from bancodedados import adicionar_faq
                 sucesso = adicionar_faq(pergunta, resposta)
