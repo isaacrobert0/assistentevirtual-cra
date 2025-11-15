@@ -1,9 +1,8 @@
-from passlib.hash import bcrypt
 import mysql.connector
 from mysql.connector import Error
-import os
-import hashlib
 from urllib.parse import urlparse
+import os
+import bcrypt
 
 def conectar():
     db_url = os.getenv("DATABASE_URL")
@@ -33,7 +32,7 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
     cursor = db.cursor()
     
     if senha:
-        senha_hash = bcrypt.hash(senha)
+        senha_hash = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode()
     else:
         senha_hash = None
 
@@ -41,6 +40,7 @@ def salvar_usuario(nome, tipo_usuario, matricula, email, senha=None):
         INSERT INTO usuarios (nome, tipo_usuario, matricula, email, senha)
         VALUES (%s, %s, %s, %s, %s)
     """
+
     cursor.execute(sql, (nome, tipo_usuario, matricula, email, senha_hash))
     db.commit()
     novo_id = cursor.lastrowid
@@ -60,11 +60,13 @@ def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
             INSERT INTO interacoes (usuario_id, mensagem_usuario, resposta_chatbot)
             VALUES (%s, %s, %s)
         """
+
         cursor.execute(sql, (usuario_id, mensagem_usuario, resposta_chatbot))
         conexao.commit()
         cursor.close()
         conexao.close()
         return True
+    
     except Exception as e:
         print("Erro ao salvar interação:", e)
         if conexao:
@@ -74,7 +76,7 @@ def salvar_interacao(usuario_id, mensagem_usuario, resposta_chatbot):
 def validar_login(email, senha_digitada):
     conexao = conectar()
     if not conexao:
-        return False
+        return None
 
     cursor = conexao.cursor(dictionary=True)
     cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
@@ -83,10 +85,14 @@ def validar_login(email, senha_digitada):
     conexao.close()
 
     if not usuario or not usuario["senha"]:
-        return False
+        return None
 
-    senha_hash = usuario["senha"]
-    return bcrypt.verify(senha_digitada, senha_hash)
+    senha_hash = usuario["senha"].encode()
+
+    if bcrypt.checkpw(senha_digitada.encode("utf-8"), senha_hash):
+        return usuario
+    else:
+        return None
 
 
 def adicionar_faq(pergunta, resposta):
